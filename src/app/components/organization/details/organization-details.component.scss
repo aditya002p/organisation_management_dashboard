@@ -1,0 +1,75 @@
+/* src/app/components/organization/details/organization-details.component.scss */
+@import "../../../../styles/variables";
+@import "../../../../styles/mixins";
+
+.organization-details-container {
+  padding: $spacing-lg;
+  background-color: $background-color;
+
+  .org-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+
+    h1 {
+      color: $primary-color;
+    }
+
+    .org-actions {
+      display: flex;
+      gap: $spacing-sm;
+
+      .btn-primary,
+      .btn-danger {
+        padding: $spacing-sm $spacing-md;
+      }
+
+      .btn-danger {
+        background-color: red;
+        color: $white;
+      }
+    }
+  }
+
+  .org-details-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-lg;
+
+    .org-info,
+    .org-members {
+      background-color: $white;
+      padding: $spacing-md;
+      border-radius: $border-radius-md;
+      @include box-shadow("subtle");
+
+      h2 {
+        margin-bottom: $spacing-md;
+        color: $primary-color;
+      }
+
+      p {
+        margin-bottom: $spacing-sm;
+      }
+    }
+
+    .org-members {
+      table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th,
+        td {
+          border: 1px solid $light-gray;
+          padding: $spacing-sm;
+          text-align: left;
+        }
+
+        th {
+          background-color: $background-color;
+        }
+      }
+    }
+  }
+}

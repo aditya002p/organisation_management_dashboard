@@ -1,0 +1,52 @@
+<!-- src/app/components/organization/details/organization-details.component.html -->
+<div class="organization-details-container">
+  <div class="org-header">
+    <h1>{{ organization?.name }}</h1>
+    <div class="org-actions">
+      <button class="btn btn-primary" (click)="editOrganization()">
+        Edit Organization
+      </button>
+      <button class="btn btn-danger" (click)="deleteOrganization()">
+        Delete Organization
+      </button>
+    </div>
+  </div>
+
+  <div class="org-details-section">
+    <div class="org-info">
+      <h2>Organization Information</h2>
+      <p><strong>Description:</strong> {{ organization?.description }}</p>
+      <p><strong>Created:</strong> {{ organization?.createdAt | date }}</p>
+      <p><strong>Type:</strong> {{ organization?.type }}</p>
+    </div>
+
+    <div class="org-members">
+      <h2>Members ({{ members.length }})</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let member of members">
+            <td>{{ member.firstName }} {{ member.lastName }}</td>
+            <td>{{ member.email }}</td>
+            <td>{{ member.role }}</td>
+            <td>
+              <button
+                *ngIf="canManageMembers"
+                (click)="manageMemberRole(member)"
+              >
+                Manage Role
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

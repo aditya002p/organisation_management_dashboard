@@ -1,0 +1,50 @@
+<!-- src/app/components/organization/create/create-organization.component.html -->
+<div class="create-organization-container">
+  <form (ngSubmit)="onSubmit()" class="create-org-form">
+    <h2>Create New Organization</h2>
+
+    <div class="form-group">
+      <label for="name">Organization Name</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        [(ngModel)]="organizationName"
+        required
+        class="form-control"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description (Optional)</label>
+      <textarea
+        id="description"
+        name="description"
+        [(ngModel)]="description"
+        class="form-control"
+        rows="4"
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Organization Type</label>
+      <div class="type-selection">
+        <label *ngFor="let type of organizationTypes" class="type-option">
+          <input
+            type="radio"
+            name="type"
+            [value]="type"
+            [(ngModel)]="selectedType"
+          />
+          {{ type }}
+        </label>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Organization</button>
+
+    <p class="error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </p>
+  </form>
+</div>

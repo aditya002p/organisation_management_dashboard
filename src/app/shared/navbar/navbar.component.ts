@@ -1,13 +1,26 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatToolbarModule,
+    MatMenuModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterModule,
+  ],
   template: `
     <mat-toolbar color="primary">
       <span class="brand" routerLink="/dashboard">Org Manager</span>
-
       <span class="spacer"></span>
 
       <ng-container *ngIf="auth.user$ | async as user">
@@ -52,10 +65,9 @@ import { Router } from '@angular/router';
   ],
 })
 export class NavbarComponent {
-  constructor(public auth: AuthService, private router: Router) {}
+  constructor(public auth: AuthService) {}
 
   async logout() {
     await this.auth.signOut();
-    this.router.navigate(['/login']);
   }
 }

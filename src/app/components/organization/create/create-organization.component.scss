@@ -1,0 +1,72 @@
+/* src/app/components/organization/create/create-organization.component.scss */
+@import "../../../../styles/variables";
+@import "../../../../styles/mixins";
+
+.create-organization-container {
+  @include flex-center;
+  min-height: 100vh;
+  background-color: $background-color;
+
+  .create-org-form {
+    width: 500px;
+    background-color: $white;
+    padding: $spacing-lg;
+    border-radius: $border-radius-md;
+    @include box-shadow("medium");
+
+    h2 {
+      text-align: center;
+      color: $primary-color;
+      margin-bottom: $spacing-lg;
+    }
+
+    .form-group {
+      margin-bottom: $spacing-md;
+
+      label {
+        display: block;
+        margin-bottom: $spacing-sm;
+        color: $text-color;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: $spacing-sm;
+        border: 1px solid $light-gray;
+        border-radius: $border-radius-sm;
+        font-size: $font-size-base;
+      }
+
+      textarea.form-control {
+        resize: vertical;
+      }
+    }
+
+    .type-selection {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: $spacing-md;
+
+      .type-option {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+
+        input[type="radio"] {
+          margin-right: $spacing-sm;
+        }
+      }
+    }
+
+    .btn-primary {
+      width: 100%;
+      margin-top: $spacing-md;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: $spacing-sm;
+    }
+  }
+}

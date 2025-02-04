@@ -2,9 +2,12 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { MatCard } from '@angular/material/card';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
+  imports: [MatCard],
   template: `
     <div class="login-container">
       <mat-card>

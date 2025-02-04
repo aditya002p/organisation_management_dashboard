@@ -1,0 +1,63 @@
+/* src/app/components/auth/login/login.component.scss */
+@import "../../../../styles/variables";
+@import "../../../../styles/mixins";
+
+.login-container {
+  @include flex-center;
+  height: 100vh;
+  background-color: $background-color;
+
+  .login-form {
+    width: 350px;
+    padding: $spacing-lg;
+    background-color: $white;
+    border-radius: $border-radius-md;
+    @include box-shadow("medium");
+
+    h2 {
+      text-align: center;
+      margin-bottom: $spacing-lg;
+      color: $primary-color;
+    }
+
+    .form-group {
+      margin-bottom: $spacing-md;
+
+      label {
+        display: block;
+        margin-bottom: $spacing-sm;
+        color: $text-color;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: $spacing-sm;
+        border: 1px solid $light-gray;
+        border-radius: $border-radius-sm;
+        font-size: $font-size-base;
+      }
+    }
+
+    .btn-primary {
+      width: 100%;
+      margin-top: $spacing-md;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: $spacing-sm;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: $spacing-md;
+      font-size: 0.9rem;
+
+      a {
+        color: $primary-color;
+        font-weight: $font-weight-bold;
+      }
+    }
+  }
+}

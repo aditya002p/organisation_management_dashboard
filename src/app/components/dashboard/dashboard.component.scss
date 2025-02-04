@@ -1,0 +1,93 @@
+/* src/app/components/dashboard/dashboard.component.scss */
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+.dashboard-container {
+  padding: $spacing-lg;
+  background-color: $background-color;
+
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+
+    h1 {
+      color: $primary-color;
+      font-weight: $font-weight-bold;
+    }
+
+    .dashboard-actions {
+      .btn-primary {
+        padding: $spacing-sm $spacing-md;
+      }
+    }
+  }
+
+  .dashboard-content {
+    .organizations-section {
+      h2 {
+        margin-bottom: $spacing-md;
+        color: $text-color;
+      }
+
+      .organizations-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: $spacing-md;
+
+        .organization-card {
+          background-color: $white;
+          border-radius: $border-radius-md;
+          padding: $spacing-md;
+          cursor: pointer;
+          transition: transform 0.3s ease;
+          @include box-shadow("subtle");
+
+          &:hover {
+            transform: scale(1.02);
+          }
+
+          .org-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: $spacing-sm;
+
+            h3 {
+              color: $primary-color;
+            }
+
+            .org-role {
+              font-size: 0.8rem;
+              color: $gray;
+              background-color: $light-gray;
+              padding: 2px $spacing-sm;
+              border-radius: $border-radius-sm;
+            }
+          }
+
+          .org-details {
+            p {
+              color: $gray;
+              font-size: 0.9rem;
+              margin-bottom: $spacing-xs;
+            }
+          }
+        }
+      }
+    }
+
+    .no-organizations {
+      @include flex-center;
+      flex-direction: column;
+      height: 300px;
+      text-align: center;
+
+      p {
+        margin-bottom: $spacing-md;
+        color: $gray;
+      }
+    }
+  }
+}

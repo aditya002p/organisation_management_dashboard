@@ -1,0 +1,80 @@
+/* src/app/components/organization/user-management/user-management.component.scss */
+@import "../../../../styles/variables";
+@import "../../../../styles/mixins";
+
+.user-management-container {
+  padding: $spacing-lg;
+  background-color: $background-color;
+
+  h1 {
+    color: $primary-color;
+    margin-bottom: $spacing-lg;
+  }
+
+  .invite-user-section,
+  .users-list-section {
+    background-color: $white;
+    padding: $spacing-lg;
+    border-radius: $border-radius-md;
+    margin-bottom: $spacing-lg;
+    @include box-shadow("subtle");
+
+    h2 {
+      color: $text-color;
+      margin-bottom: $spacing-md;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: $spacing-md;
+
+      .form-group {
+        .form-control {
+          width: 100%;
+          padding: $spacing-sm;
+          border: 1px solid $light-gray;
+          border-radius: $border-radius-sm;
+        }
+      }
+
+      .btn-primary {
+        align-self: flex-end;
+        padding: $spacing-sm $spacing-md;
+      }
+    }
+  }
+
+  .users-list-section {
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th,
+      td {
+        border: 1px solid $light-gray;
+        padding: $spacing-sm;
+        text-align: left;
+      }
+
+      th {
+        background-color: $background-color;
+      }
+
+      .status-active {
+        color: green;
+        font-weight: bold;
+      }
+
+      .status-pending {
+        color: orange;
+        font-weight: bold;
+      }
+
+      button {
+        margin-right: $spacing-sm;
+        padding: 4px $spacing-sm;
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+// Color Palette
+$primary-color: #3f51b5;
+$secondary-color: #ff4081;
+$background-color: #f5f5f5;
+$text-color: #333;
+$white: #ffffff;
+$gray: #666;
+$light-gray: #e0e0e0;
+
+// Typography
+$font-family-primary: "Roboto", sans-serif;
+$font-size-base: 16px;
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-bold: 700;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// Border Radius
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+
+// Shadows
+$box-shadow-subtle: 0 2px 4px rgba(0, 0, 0, 0.1);
+$box-shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.15);
+
+// Breakpoints
+$breakpoint-xs: 480px;
+$breakpoint-sm: 768px;
+$breakpoint-md: 1024px;
+$breakpoint-lg: 1200px;

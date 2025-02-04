@@ -1,0 +1,62 @@
+// src/styles/_mixins.scss
+
+// Flexbox Mixins
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Responsive Mixins
+@mixin responsive($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: $breakpoint-xs) {
+      @content;
+    }
+  } @else if $breakpoint == sm {
+    @media (max-width: $breakpoint-sm) {
+      @content;
+    }
+  } @else if $breakpoint == md {
+    @media (max-width: $breakpoint-md) {
+      @content;
+    }
+  } @else if $breakpoint == lg {
+    @media (min-width: $breakpoint-lg) {
+      @content;
+    }
+  }
+}
+
+// Typography Mixins
+@mixin text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Button Mixins
+@mixin button-primary {
+  background-color: $primary-color;
+  color: $white;
+  border-radius: $border-radius-sm;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+}
+
+// Shadow Mixins
+@mixin box-shadow($level: "subtle") {
+  @if $level == "subtle" {
+    box-shadow: $box-shadow-subtle;
+  } @else if $level == "medium" {
+    box-shadow: $box-shadow-medium;
+  }
+}

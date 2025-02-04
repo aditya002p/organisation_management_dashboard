@@ -1,0 +1,65 @@
+<!-- src/app/components/organization/user-management/user-management.component.html -->
+<div class="user-management-container">
+  <h1>User Management</h1>
+
+  <div class="invite-user-section">
+    <h2>Invite New Members</h2>
+    <form (ngSubmit)="inviteUser()" [formGroup]="inviteForm">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" formControlName="role" class="form-control">
+          <option value="MEMBER">Member</option>
+          <option value="ADMIN">Admin</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Send Invitation</button>
+    </form>
+  </div>
+
+  <div class="users-list-section">
+    <h2>Current Members</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.firstName }} {{ user.lastName }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <span
+              [ngClass]="{
+                'status-active': user.status === 'ACTIVE',
+                'status-pending': user.status === 'PENDING'
+              }"
+            >
+              {{ user.status }}
+            </span>
+          </td>
+          <td>
+            <button (click)="changeUserRole(user)">Change Role</button>
+            <button (click)="removeUser(user)">Remove</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

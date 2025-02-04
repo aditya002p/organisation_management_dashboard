@@ -1,0 +1,78 @@
+/* src/app/components/auth/register/register.component.scss */
+@import "../../../../styles/variables";
+@import "../../../../styles/mixins";
+
+.register-container {
+  @include flex-center;
+  min-height: 100vh;
+  background-color: $background-color;
+
+  .register-form {
+    width: 400px;
+    padding: $spacing-lg;
+    background-color: $white;
+    border-radius: $border-radius-md;
+    @include box-shadow("medium");
+
+    h2 {
+      text-align: center;
+      color: $primary-color;
+      margin-bottom: $spacing-lg;
+    }
+
+    .form-group {
+      margin-bottom: $spacing-md;
+
+      label {
+        display: block;
+        margin-bottom: $spacing-sm;
+        color: $text-color;
+        font-weight: $font-weight-regular;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: $spacing-sm;
+        border: 1px solid $light-gray;
+        border-radius: $border-radius-sm;
+        font-size: $font-size-base;
+
+        &.is-invalid {
+          border-color: red;
+        }
+      }
+
+      .invalid-feedback {
+        color: red;
+        font-size: 0.8rem;
+        margin-top: $spacing-xs;
+      }
+    }
+
+    .btn-primary {
+      width: 100%;
+      margin-top: $spacing-md;
+      padding: $spacing-sm $spacing-md;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: $spacing-md;
+      font-size: 0.9rem;
+
+      a {
+        color: $primary-color;
+        font-weight: $font-weight-bold;
+      }
+    }
+
+    .alert-danger {
+      background-color: rgba(255, 0, 0, 0.1);
+      color: red;
+      text-align: center;
+      padding: $spacing-sm;
+      border-radius: $border-radius-sm;
+      margin-top: $spacing-md;
+    }
+  }
+}

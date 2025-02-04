@@ -2,6 +2,12 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
+import { LoginComponent } from './components/auth/login/login.component';
+import { RegisterComponent } from './components/auth/register/register.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { OrganizationDetailsComponent } from './components/organization/details/organization-details.component';
+import { OrganizationSettingsComponent } from './components/organization/settings/organization-settings.component';
+import { ProfileSettingsComponent } from './components/profile/profile-settings.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },

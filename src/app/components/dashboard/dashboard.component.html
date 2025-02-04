@@ -1,0 +1,40 @@
+<!-- src/app/components/dashboard/dashboard.component.html -->
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Organization Dashboard</h1>
+    <div class="dashboard-actions">
+      <button class="btn btn-primary" routerLink="/organization/create">
+        Create Organization
+      </button>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="organizations-section" *ngIf="organizations.length > 0">
+      <h2>Your Organizations</h2>
+      <div class="organizations-grid">
+        <div
+          *ngFor="let org of organizations"
+          class="organization-card"
+          (click)="navigateToOrgDetails(org.id)"
+        >
+          <div class="org-header">
+            <h3>{{ org.name }}</h3>
+            <span class="org-role">{{ org.userRole }}</span>
+          </div>
+          <div class="org-details">
+            <p>Members: {{ org.memberCount }}</p>
+            <p>Created: {{ org.createdAt | date }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-organizations" *ngIf="organizations.length === 0">
+      <p>You haven't joined any organizations yet.</p>
+      <button class="btn btn-primary" routerLink="/organization/create">
+        Create Your First Organization
+      </button>
+    </div>
+  </div>
+</div>
