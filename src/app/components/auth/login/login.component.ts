@@ -1,121 +1,50 @@
+// login.component.ts
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
-  standalone: false,
-  template: `
-    <div class="login-container">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>Login</mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
-          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <mat-form-field appearance="fill">
-              <input
-                matInput
-                placeholder="Email"
-                formControlName="email"
-                type="email"
-              />
-              <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
-                Email is required
-              </mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="fill">
-              <input
-                matInput
-                placeholder="Password"
-                formControlName="password"
-                type="password"
-              />
-              <mat-error
-                *ngIf="loginForm.get('password')?.hasError('required')"
-              >
-                Password is required
-              </mat-error>
-            </mat-form-field>
-
-            <button
-              mat-raised-button
-              color="primary"
-              type="submit"
-              [disabled]="loginForm.invalid"
-            >
-              Login
-            </button>
-          </form>
-
-          <button mat-stroked-button (click)="googleLogin()">
-            Login with Google
-          </button>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  `,
-  styles: [
-    `
-      .login-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      mat-card {
-        max-width: 400px;
-        width: 100%;
-        padding: 20px;
-      }
-      form {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-    `,
-  ],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  errorMessage: string = '';
 
-  constructor(
-    private fb: FormBuilder,
-    private auth: AuthService,
-    private router: Router
-  ) {
+  constructor(private fb: FormBuilder, private authService: AuthService) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required]],
     });
   }
 
-  async onSubmit() {
+  async onSubmit(): Promise<void> {
     if (this.loginForm.valid) {
       try {
         const { email, password } = this.loginForm.value;
-        await this.auth.emailSignIn(email, password);
-        this.router.navigate(['/dashboard']);
-      } catch (error) {
-        console.error('Login error:', error);
+        await this.authService.emailSignIn(email, password);
+      } catch (error: any) {
+        this.errorMessage = error.message || 'Login failed. Please try again.';
       }
     }
   }
 
-  async googleLogin() {
+  async googleLogin(): Promise<void> {
     try {
-      await this.auth.googleSignIn();
-      this.router.navigate(['/dashboard']);
-    } catch (error) {
-      console.error('Google login error:', error);
+      await this.authService.googleSignIn();
+    } catch (error: any) {
+      this.errorMessage =
+        error.message || 'Google login failed. Please try again.';
     }
   }
 }

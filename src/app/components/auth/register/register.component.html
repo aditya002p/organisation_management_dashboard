@@ -1,84 +1,113 @@
+<!-- register.component.html -->
 <div class="register-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Create Account</mat-card-title>
-    </mat-card-header>
+  <form
+    [formGroup]="registerForm"
+    (ngSubmit)="onSubmit()"
+    class="register-form"
+  >
+    <h2>Create Account</h2>
+    <p class="subtitle">
+      Create an account so you can explore all the existing jobs
+    </p>
 
-    <mat-card-content>
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>First Name</mat-label>
-            <input matInput formControlName="firstName" required />
-            <mat-error *ngIf="f.firstName.errors?.required"
-              >First name is required</mat-error
-            >
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Last Name</mat-label>
-            <input matInput formControlName="lastName" required />
-            <mat-error *ngIf="f.lastName.errors?.required"
-              >Last name is required</mat-error
-            >
-          </mat-form-field>
-        </div>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email" required />
-          <mat-error *ngIf="f.email.errors?.required"
-            >Email is required</mat-error
-          >
-          <mat-error *ngIf="f.email.errors?.email"
-            >Please enter a valid email</mat-error
-          >
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password" required />
-          <mat-error *ngIf="f.password.errors?.required"
-            >Password is required</mat-error
-          >
-          <mat-error *ngIf="f.password.errors?.minlength"
-            >Password must be at least 8 characters</mat-error
-          >
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Confirm Password</mat-label>
-          <input
-            matInput
-            type="password"
-            formControlName="confirmPassword"
-            required
-          />
-          <mat-error *ngIf="f.confirmPassword.errors?.required"
-            >Please confirm your password</mat-error
-          >
-          <mat-error *ngIf="f.confirmPassword.errors?.mustMatch"
-            >Passwords must match</mat-error
-          >
-        </mat-form-field>
-
-        <div *ngIf="errorMessage" class="error-message">
-          {{ errorMessage }}
-        </div>
-
-        <button
-          mat-raised-button
-          color="primary"
-          type="submit"
-          [disabled]="registerForm.invalid || submitted"
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        class="form-control"
+        placeholder="Enter your email"
+      />
+      <div
+        *ngIf="
+          registerForm.get('email')?.invalid &&
+          (registerForm.get('email')?.dirty ||
+            registerForm.get('email')?.touched)
+        "
+        class="error-text"
+      >
+        <small *ngIf="registerForm.get('email')?.errors?.['required']"
+          >Email is required</small
         >
-          Register
-        </button>
+        <small *ngIf="registerForm.get('email')?.errors?.['email']"
+          >Invalid email format</small
+        >
+      </div>
+    </div>
 
-        <div class="login-link">
-          Already have an account? <a routerLink="/login">Login here</a>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        class="form-control"
+        placeholder="Enter your password"
+      />
+      <div
+        *ngIf="
+          registerForm.get('password')?.invalid &&
+          (registerForm.get('password')?.dirty ||
+            registerForm.get('password')?.touched)
+        "
+        class="error-text"
+      >
+        <small *ngIf="registerForm.get('password')?.errors?.['required']"
+          >Password is required</small
+        >
+        <small *ngIf="registerForm.get('password')?.errors?.['minlength']"
+          >Password must be at least 8 characters</small
+        >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password</label>
+      <input
+        type="password"
+        id="confirmPassword"
+        formControlName="confirmPassword"
+        class="form-control"
+        placeholder="Confirm your password"
+      />
+      <div
+        *ngIf="
+          registerForm.get('confirmPassword')?.invalid &&
+          (registerForm.get('confirmPassword')?.dirty ||
+            registerForm.get('confirmPassword')?.touched)
+        "
+        class="error-text"
+      >
+        <small *ngIf="registerForm.get('confirmPassword')?.errors?.['required']"
+          >Please confirm your password</small
+        >
+        <small
+          *ngIf="registerForm.get('confirmPassword')?.errors?.['passwordMismatch']"
+          >Passwords must match</small
+        >
+      </div>
+    </div>
+
+    <button type="submit" class="btn-signup" [disabled]="registerForm.invalid">
+      Sign up
+    </button>
+
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <p class="login-text">
+      Already have an account?
+      <a routerLink="/login" class="login-link">Login here</a>
+    </p>
+
+    <div class="divider">
+      <span>Or continue with</span>
+    </div>
+
+    <div class="social-login">
+      <button type="button" class="social-btn google" (click)="googleSignUp()">
+        <img src="assets/google-icon.png" alt="Google" />
+      </button>
+    </div>
+  </form>
 </div>

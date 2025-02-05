@@ -1,9 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OrganizationService } from '../../../services/organization.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-organization-settings',
+  standalone: true,
+  imports: [MatFormFieldModule],
   template: `
     <form
       [formGroup]="settingsForm"

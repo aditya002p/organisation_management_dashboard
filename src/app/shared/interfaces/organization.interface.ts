@@ -1,4 +1,4 @@
-export interface IOrganization {
+interface Organization {
   id?: string;
   name: string;
   description?: string;

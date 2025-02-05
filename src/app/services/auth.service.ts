@@ -1,58 +1,85 @@
+// src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat/app';
 import { Observable, of } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, first } from 'rxjs/operators';
+import firebase from 'firebase/compat/app';
+import { User } from '../models/user.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  user$: Observable<any>;
+  user$: Observable<User | null>;
 
   constructor(
     private afAuth: AngularFireAuth,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {
     this.user$ = this.afAuth.authState.pipe(
-      switchMap((user) => {
-        if (user) {
-          return this.firestore.doc(`users/${user.uid}`).valueChanges();
-        } else {
-          return of(null);
-        }
-      })
+      switchMap((user) =>
+        user
+          ? this.firestore.doc<User>(`users/${user.uid}`).valueChanges()
+          : of(null)
+      )
     );
   }
 
-  async emailSignUp(email: string, password: string) {
+  async emailSignUp(email: string, password: string): Promise<void> {
     try {
       const credential = await this.afAuth.createUserWithEmailAndPassword(
         email,
         password
       );
-      return this.updateUserData(credential.user);
-    } catch (error) {
+
+      if (credential.user) {
+        await this.updateUserData(credential.user);
+        this.snackBar.open('Account created successfully!', 'Close', {
+          duration: 3000,
+        });
+        this.router.navigate(['/login']);
+      }
+    } catch (error: any) {
+      this.snackBar.open(error.message, 'Close', { duration: 5000 });
       throw error;
     }
   }
 
-  async emailSignIn(email: string, password: string) {
-    return this.afAuth.signInWithEmailAndPassword(email, password);
+  async emailSignIn(email: string, password: string): Promise<void> {
+    try {
+      await this.afAuth.signInWithEmailAndPassword(email, password);
+      this.snackBar.open('Welcome back!', 'Close', { duration: 3000 });
+      this.router.navigate(['/dashboard']);
+    } catch (error: any) {
+      this.snackBar.open(error.message, 'Close', { duration: 5000 });
+      throw error;
+    }
   }
 
-  async googleSignIn() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    const credential = await this.afAuth.signInWithPopup(provider);
-    return this.updateUserData(credential.user);
+  async googleSignIn(): Promise<void> {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      const credential = await this.afAuth.signInWithPopup(provider);
+
+      if (credential.user) {
+        await this.updateUserData(credential.user);
+        this.snackBar.open('Google Sign-In Successful!', 'Close', {
+          duration: 3000,
+        });
+        this.router.navigate(['/dashboard']);
+      }
+    } catch (error: any) {
+      this.snackBar.open(error.message, 'Close', { duration: 5000 });
+      throw error;
+    }
   }
 
-  async signOut() {
-    await this.afAuth.signOut();
-  }
-
-  private updateUserData(user: any) {
+  private async updateUserData(user: firebase.User): Promise<void> {
     const userRef = this.firestore.doc(`users/${user.uid}`);
     const data = {
       uid: user.uid,
@@ -61,21 +88,11 @@ export class AuthService {
       photoURL: user.photoURL,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
-    return userRef.set(data, { merge: true });
+    await userRef.set(data, { merge: true });
   }
-  async updateProfile(data: { displayName: string }) {
-    const user = await this.afAuth.currentUser;
-    if (user) {
-      await user.updateProfile({
-        displayName: data.displayName,
-      });
 
-      // Update Firestore document as well
-      return this.firestore.doc(`users/${user.uid}`).update({
-        displayName: data.displayName,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      });
-    }
-    throw new Error('User not logged in');
+  async signOut(): Promise<void> {
+    await this.afAuth.signOut();
+    this.router.navigate(['/login']);
   }
 }

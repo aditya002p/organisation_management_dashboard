@@ -1,9 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { OrganizationService } from '../../../services/organization.service';
 import { Observable } from 'rxjs';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-user-management',
+  standalone: true,
+  imports: [MatFormFieldModule],
   template: `
     <div class="user-management">
       <div class="add-user">

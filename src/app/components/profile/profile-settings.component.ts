@@ -1,16 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { Observable } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
 @Component({
   selector: 'app-profile-settings',
-  standalone: false,
+  standalone: true,
+  imports: [MatCardModule, MatFormFieldModule],
   template: `
     <div class="profile-settings" *ngIf="user$ | async as user">
       <mat-card>

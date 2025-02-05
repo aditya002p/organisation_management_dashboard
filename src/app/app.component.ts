@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/navbar/navbar.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,8 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
       }
     `,
   ],
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, NavbarComponent],
 })
 export class AppComponent {
   title = 'Organization Management Dashboard';

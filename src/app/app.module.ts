@@ -6,6 +6,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { environment } from 'src/environments/environment';
+import { AuthService } from './services/auth.service';
+import { AuthGuard } from './guards/auth.guard';
 
 // Components
 import { NavbarComponent } from './shared/navbar/navbar.component';
@@ -17,11 +23,12 @@ import { OrganizationSettingsComponent } from './components/organization/setting
 import { UserManagementComponent } from './components/organization/user-management/user-management.component';
 import { ProfileSettingsComponent } from './components/profile/profile-settings.component';
 import { CreateOrganizationComponent } from './components/organization/create/create-organization.component';
+import { RouterModule } from '@angular/router';
+import { routes } from './app.routes';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NavbarComponent,
+  declarations: [AppComponent],
+  imports: [
     LoginComponent,
     RegisterComponent,
     DashboardComponent,
@@ -30,8 +37,7 @@ import { CreateOrganizationComponent } from './components/organization/create/cr
     UserManagementComponent,
     ProfileSettingsComponent,
     CreateOrganizationComponent,
-  ],
-  imports: [
+    NavbarComponent,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -39,8 +45,12 @@ import { CreateOrganizationComponent } from './components/organization/create/cr
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
+    RouterModule.forRoot(routes),
   ],
-  providers: [],
+  providers: [AuthService, AuthGuard],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

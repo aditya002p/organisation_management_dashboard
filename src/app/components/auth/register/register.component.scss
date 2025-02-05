@@ -1,38 +1,162 @@
-@import "src/styles/mixins";
-@import "src/styles/_variables.scss";
+/* register.component.scss */
 .register-container {
-  @include flex-center;
-  min-height: 100vh;
-  padding: $spacing-lg;
-  background-color: $background-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
 
-  mat-card {
-    width: 100%;
-    max-width: 500px;
-    padding: $spacing-xl;
+.register-form {
+  width: 100%;
+  max-width: 400px;
+  background-color: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 24px;
   }
 
-  .form-row {
-    display: flex;
-    gap: $spacing-md;
+  .subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+  }
 
-    @include responsive(xs) {
-      flex-direction: column;
+  .form-group {
+    margin-bottom: 20px;
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+    }
+
+    .error-text {
+      color: red;
+      font-size: 12px;
+      margin-top: 5px;
     }
   }
 
-  mat-form-field {
+  .btn-signup {
     width: 100%;
-    margin-bottom: $spacing-md;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+
+    &:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
   }
 
   .error-message {
     color: red;
-    margin-bottom: $spacing-md;
+    text-align: center;
+    margin-top: 15px;
   }
 
-  .login-link {
-    margin-top: $spacing-lg;
+  .login-text {
     text-align: center;
+    color: #666;
+    margin-top: 20px;
+    font-size: 14px;
+
+    .login-link {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  }
+
+  .divider {
+    position: relative;
+    text-align: center;
+    margin: 30px 0;
+    color: #999;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 45%;
+      height: 1px;
+      background-color: #ddd;
+    }
+
+    &::before {
+      left: 0;
+    }
+
+    &::after {
+      right: 0;
+    }
+
+    span {
+      background: white;
+      padding: 0 10px;
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  .social-login {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+
+    .social-btn {
+      width: 60px;
+      height: 60px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: white;
+      cursor: pointer;
+      transition: border-color 0.3s;
+
+      &:hover {
+        border-color: #007bff;
+      }
+
+      img {
+        width: 30px;
+        height: 30px;
+      }
+    }
   }
 }

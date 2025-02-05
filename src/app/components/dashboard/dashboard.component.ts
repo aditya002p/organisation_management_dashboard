@@ -1,18 +1,25 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterModule, Router } from '@angular/router';
 import { OrganizationService } from '../../services/organization.service';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
+import { Organization } from '../../shared/types';
 import { switchMap } from 'rxjs/operators';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { Router, RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-dashboard',
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterModule,
+  ],
   template: `
     <div class="dashboard-container">
       <mat-card>
@@ -72,20 +79,23 @@ import { Router, RouterModule } from '@angular/router';
   ],
 })
 export class DashboardComponent implements OnInit {
-  organizations$: Observable<any[]>;
+  organizations$: Observable<Organization[]>;
 
   constructor(
     private orgService: OrganizationService,
-    private auth: AuthService
+    private auth: AuthService,
+    private router: Router // ✅ Fixed: Imported and Injected Correctly
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.organizations$ = this.auth.user$.pipe(
-      switchMap((user) => this.orgService.getUserOrganizations(user.uid))
+      switchMap((user) =>
+        user ? this.orgService.getUserOrganizations(user.uid) : []
+      )
     );
   }
 
-  createNewOrg() {
-    // Navigate to organization creation page
+  createNewOrg(): void {
+    this.router.navigate(['/organization/create']);
   }
 }

@@ -1,64 +1,60 @@
-// src/app/components/auth/register/register.component.ts
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { MustMatch } from '../../../utils/must-match.validator';
+import { passwordMatchValidator } from '../../../utils/password-match.validator';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
   registerForm: FormGroup;
-  submitted = false;
-  errorMessage = '';
+  errorMessage: string = '';
+  submitted: boolean = false;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private authService: AuthService
-  ) {}
-
-  ngOnInit() {
-    this.registerForm = this.formBuilder.group(
+  constructor(private fb: FormBuilder, private authService: AuthService) {
+    this.registerForm = this.fb.group(
       {
-        firstName: ['', Validators.required],
-        lastName: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(8)]],
-        confirmPassword: ['', Validators.required],
+        confirmPassword: ['', [Validators.required]],
       },
       {
-        validator: MustMatch('password', 'confirmPassword'),
+        validators: passwordMatchValidator,
       }
     );
   }
 
-  // convenience getter for easy access to form fields
-  get f() {
-    return this.registerForm.controls;
-  }
-
-  onSubmit() {
+  async onSubmit(): Promise<void> {
     this.submitted = true;
 
-    // stop here if form is invalid
-    if (this.registerForm.invalid) {
-      return;
+    if (this.registerForm.valid) {
+      try {
+        const { email, password } = this.registerForm.value;
+        await this.authService.emailSignUp(email, password);
+      } catch (error: any) {
+        this.errorMessage =
+          error.message || 'Registration failed. Please try again.';
+      }
     }
+  }
 
-    // Extract form values
-    const { email, password } = this.registerForm.value;
-
-    this.authService
-      .emailSignUp(email, password)
-      .then(() => {
-        this.router.navigate(['/login']);
-      })
-      .catch((error) => {
-        this.errorMessage = error.message || 'Registration failed';
-      });
+  async googleSignUp(): Promise<void> {
+    try {
+      await this.authService.googleSignIn();
+    } catch (error: any) {
+      this.errorMessage =
+        error.message || 'Google sign up failed. Please try again.';
+    }
   }
 }
