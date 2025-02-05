@@ -63,4 +63,19 @@ export class AuthService {
     };
     return userRef.set(data, { merge: true });
   }
+  async updateProfile(data: { displayName: string }) {
+    const user = await this.afAuth.currentUser;
+    if (user) {
+      await user.updateProfile({
+        displayName: data.displayName,
+      });
+
+      // Update Firestore document as well
+      return this.firestore.doc(`users/${user.uid}`).update({
+        displayName: data.displayName,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+    }
+    throw new Error('User not logged in');
+  }
 }

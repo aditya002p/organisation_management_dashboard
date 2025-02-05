@@ -1,9 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-profile-settings',
+  standalone: false,
   template: `
     <div class="profile-settings" *ngIf="user$ | async as user">
       <mat-card>
@@ -60,22 +67,33 @@ import { AuthService } from '../../services/auth.service';
 })
 export class ProfileSettingsComponent implements OnInit {
   profileForm: FormGroup;
-  user$ = this.auth.user$;
+  user$: Observable<any>;
 
-  constructor(private fb: FormBuilder, private auth: AuthService) {}
+  constructor(private fb: FormBuilder, private auth: AuthService) {
+    this.user$ = this.auth.user$;
+  }
 
   ngOnInit() {
     this.user$.subscribe((user) => {
-      this.profileForm = this.fb.group({
-        displayName: [user.displayName, Validators.required],
-        email: [user.email],
-      });
+      if (user) {
+        this.profileForm.setValue({
+          displayName: [user.displayName || ' ', Validators.required],
+          email: [{ value: user.email || ' ', disabled: true }],
+        });
+      }
     });
   }
 
   async onSubmit() {
     if (this.profileForm.valid) {
-      await this.auth.updateProfile(this.profileForm.value);
+      try {
+        await this.auth.updateProfile({
+          displayName: this.profileForm.value.displayName,
+        });
+        console.log('Profile updated successfully');
+      } catch (error) {
+        console.error('Error updating profile:', error);
+      }
     }
   }
 }

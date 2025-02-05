@@ -3,9 +3,16 @@ import { OrganizationService } from '../../services/organization.service';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { Router, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-dashboard',
+  standalone: false,
   template: `
     <div class="dashboard-container">
       <mat-card>

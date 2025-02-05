@@ -50,17 +50,15 @@ export class RegisterComponent implements OnInit {
     }
 
     // Extract form values
-    const { firstName, lastName, email, password } = this.registerForm.value;
+    const { email, password } = this.registerForm.value;
 
-    this.authService.register(firstName, lastName, email, password).subscribe({
-      next: (response) => {
-        // Handle successful registration
+    this.authService
+      .emailSignUp(email, password)
+      .then(() => {
         this.router.navigate(['/login']);
-      },
-      error: (error) => {
-        // Handle registration error
+      })
+      .catch((error) => {
         this.errorMessage = error.message || 'Registration failed';
-      },
-    });
+      });
   }
 }

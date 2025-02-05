@@ -3,9 +3,16 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { OrganizationService } from '../../../services/organization.service';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-create-organization',
+  standalone: false,
   template: `
     <mat-card class="create-org-card">
       <mat-card-header>
@@ -79,7 +86,7 @@ export class CreateOrganizationComponent {
   async onSubmit() {
     if (this.orgForm.valid) {
       try {
-        const user = await this.auth.user$.pipe(take(1)).toPromise();
+        const user = await firstValueFrom(this.auth.user$);
         const org = await this.orgService.createOrganization(
           this.orgForm.value,
           user.uid

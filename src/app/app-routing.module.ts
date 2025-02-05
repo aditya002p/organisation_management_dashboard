@@ -8,6 +8,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { OrganizationDetailsComponent } from './components/organization/details/organization-details.component';
 import { OrganizationSettingsComponent } from './components/organization/settings/organization-settings.component';
 import { ProfileSettingsComponent } from './components/profile/profile-settings.component';
+import { CreateOrganizationComponent } from './components/organization/create/create-organization.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -16,6 +17,11 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'organization/create',
+    component: CreateOrganizationComponent,
     canActivate: [AuthGuard],
   },
   {

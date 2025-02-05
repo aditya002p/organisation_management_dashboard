@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { OrganizationService } from '../../../services/organization.service';
 import { Observable } from 'rxjs';
+import { MatCardModule } from '@angular/material/card';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-organization-details',
+  standalone: false,
   template: `
     <div class="org-details" *ngIf="organization$ | async as org">
       <mat-card>

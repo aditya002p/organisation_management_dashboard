@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable, combineLatest, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
 
@@ -22,9 +22,20 @@ export class OrganizationService {
       .collection('organizations')
       .add(orgData)
       .then((docRef) => {
-        // Add owner as first member
         return this.addMember(docRef.id, userId, 'owner');
       });
+  }
+
+  getOrganization(orgId: string): Observable<any> {
+    return this.firestore.doc(`organizations/${orgId}`).valueChanges();
+  }
+
+  getOrganizationMembers(orgId: string): Observable<any[]> {
+    return this.firestore
+      .collection('organizationMembers', (ref) =>
+        ref.where('organizationId', '==', orgId)
+      )
+      .valueChanges();
   }
 
   getUserOrganizations(userId: string): Observable<any[]> {
@@ -34,15 +45,45 @@ export class OrganizationService {
       )
       .valueChanges()
       .pipe(
-        map((memberships) => {
-          const orgIds = memberships.map((m: any) => m.organizationId);
-          return combineLatest(
-            orgIds.map((orgId) =>
-              this.firestore.doc(`organizations/${orgId}`).valueChanges()
-            )
+        map((memberships: any[]) => {
+          const orgObservables = memberships.map((m) =>
+            this.firestore
+              .doc(`organizations/${m.organizationId}`)
+              .valueChanges()
           );
+          return forkJoin(orgObservables);
         })
       );
+  }
+
+  getCurrentUserRole(orgId: string): Observable<string> {
+    return this.firestore
+      .collection('organizationMembers', (ref) =>
+        ref
+          .where('organizationId', '==', orgId)
+          .where('userId', '==', firebase.auth().currentUser?.uid || '')
+      )
+      .valueChanges()
+      .pipe(
+        map((members: any[]) => (members.length > 0 ? members[0].role : ''))
+      );
+  }
+
+  getMemberCount(orgId: string): Observable<number> {
+    return this.firestore
+      .collection('organizationMembers', (ref) =>
+        ref.where('organizationId', '==', orgId)
+      )
+      .valueChanges()
+      .pipe(map((members) => members.length));
+  }
+
+  isUserAdmin(orgId: string): Observable<boolean> {
+    return this.getCurrentUserRole(orgId).pipe(map((role) => role === 'admin'));
+  }
+
+  isUserOwner(orgId: string): Observable<boolean> {
+    return this.getCurrentUserRole(orgId).pipe(map((role) => role === 'owner'));
   }
 
   addMember(orgId: string, userId: string, role: string) {
@@ -52,8 +93,31 @@ export class OrganizationService {
       role,
       joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
-
     return this.firestore.collection('organizationMembers').add(memberData);
+  }
+
+  addMemberByEmail(orgId: string, email: string, role: string) {
+    const memberData = {
+      organizationId: orgId,
+      email,
+      role,
+      joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+    return this.firestore.collection('organizationMembers').add(memberData);
+  }
+
+  updateMemberRole(orgId: string, memberId: string, newRole: string) {
+    return this.firestore
+      .collection('organizationMembers')
+      .doc(memberId)
+      .update({ role: newRole });
+  }
+
+  removeMember(orgId: string, memberId: string) {
+    return this.firestore
+      .collection('organizationMembers')
+      .doc(memberId)
+      .delete();
   }
 
   updateOrganization(orgId: string, data: any) {
@@ -64,7 +128,6 @@ export class OrganizationService {
   }
 
   deleteOrganization(orgId: string) {
-    // Delete organization and all its members
     return this.firestore
       .doc(`organizations/${orgId}`)
       .delete()

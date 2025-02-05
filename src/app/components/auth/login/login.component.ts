@@ -2,12 +2,15 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { MatCard } from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [MatCard],
+  standalone: false,
   template: `
     <div class="login-container">
       <mat-card>
@@ -17,26 +20,28 @@ import { MatCard } from '@angular/material/card';
 
         <mat-card-content>
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <mat-form-field>
+            <mat-form-field appearance="fill">
               <input
                 matInput
                 placeholder="Email"
                 formControlName="email"
                 type="email"
               />
-              <mat-error *ngIf="loginForm.get('email').hasError('required')">
+              <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
                 Email is required
               </mat-error>
             </mat-form-field>
 
-            <mat-form-field>
+            <mat-form-field appearance="fill">
               <input
                 matInput
                 placeholder="Password"
                 formControlName="password"
                 type="password"
               />
-              <mat-error *ngIf="loginForm.get('password').hasError('required')">
+              <mat-error
+                *ngIf="loginForm.get('password')?.hasError('required')"
+              >
                 Password is required
               </mat-error>
             </mat-form-field>

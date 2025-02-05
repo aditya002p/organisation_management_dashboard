@@ -9,15 +9,7 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatToolbarModule,
-    MatMenuModule,
-    MatButtonModule,
-    MatIconModule,
-    RouterModule,
-  ],
+  standalone: false,
   template: `
     <mat-toolbar color="primary">
       <span class="brand" routerLink="/dashboard">Org Manager</span>
