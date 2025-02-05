@@ -4,7 +4,6 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
-  standalone: false,
   template: `
     <app-navbar></app-navbar>
     <div class="app-container">
@@ -20,6 +19,7 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
       }
     `,
   ],
+  standalone: false,
 })
 export class AppComponent {
   title = 'Organization Management Dashboard';

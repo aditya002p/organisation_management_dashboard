@@ -45,14 +45,18 @@ export class OrganizationService {
       )
       .valueChanges()
       .pipe(
-        map((memberships: any[]) => {
-          const orgObservables = memberships.map((m) =>
-            this.firestore
-              .doc(`organizations/${m.organizationId}`)
-              .valueChanges()
-          );
-          return forkJoin(orgObservables);
-        })
+        map((memberships: any[]) => memberships.map((m) => m.organizationId)), // Extract organization IDs
+        map((orgIds: string[]) =>
+          orgIds.length
+            ? combineLatest(
+                orgIds.map((orgId) =>
+                  this.firestore.doc(`organizations/${orgId}`).valueChanges()
+                )
+              )
+            : []
+        ),
+        // Ensure the final Observable emits a valid array
+        map((obs: Observable<any[]> | []) => (Array.isArray(obs) ? obs : []))
       );
   }
 
