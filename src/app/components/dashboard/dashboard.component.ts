@@ -137,10 +137,14 @@ export class DashboardComponent implements OnInit {
 
   menuItems = [
     { label: 'Home', icon: 'fas fa-home', active: true },
-    { label: 'Create', icon: 'fas fa-plus' },
-    { label: 'Details', icon: 'fas fa-info-circle' },
-    { label: 'User', icon: 'fas fa-user' },
-    { label: 'Profile', icon: 'fas fa-user' },
+    { label: 'Create', icon: 'fas fa-plus', routerLink: 'organization/create' },
+    {
+      label: 'Details',
+      icon: 'fas fa-info-circle',
+      routerLink: 'organization/details',
+    },
+    { label: 'User', icon: 'fas fa-user', routerLink: 'organization/user' },
+    { label: 'Profile', icon: 'fas fa-user', routerLink: 'profile' },
     {
       label: 'Settings',
       icon: 'fas fa-cog',

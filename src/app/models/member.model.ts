@@ -1,7 +1,8 @@
 export interface Member {
   id?: string;
   organizationId: string;
-  userId: string;
+  email: string;
   role: 'owner' | 'admin' | 'member';
-  joinedAt: Date;
+  userId?: string;
+  joinedAt: any;
 }

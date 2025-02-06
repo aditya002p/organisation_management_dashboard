@@ -29,6 +29,7 @@ import { routes } from './app.routes';
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    NavbarComponent,
     LoginComponent,
     RegisterComponent,
     DashboardComponent,
@@ -37,7 +38,6 @@ import { routes } from './app.routes';
     UserManagementComponent,
     ProfileSettingsComponent,
     CreateOrganizationComponent,
-    NavbarComponent,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,

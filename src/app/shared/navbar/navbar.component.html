@@ -1,0 +1,27 @@
+<mat-toolbar color="primary" class="navbar">
+  <span class="brand" routerLink="/dashboard">Org Manager</span>
+  <span class="spacer"></span>
+
+  <ng-container *ngIf="auth.user$ | async as user">
+    <button mat-button [matMenuTriggerFor]="userMenu" class="user-btn">
+      <img
+        [src]="user.photoURL || '/assets/default-avatar.png'"
+        class="avatar"
+        alt="User avatar"
+      />
+      <span class="username">{{ user.displayName }}</span>
+      <mat-icon class="dropdown-icon">expand_more</mat-icon>
+    </button>
+
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item routerLink="/profile">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </ng-container>
+</mat-toolbar>

@@ -1,0 +1,77 @@
+<!-- src/app/components/profile/profile-settings.component.html -->
+<div class="profile-settings-container">
+  <mat-card class="profile-card" *ngIf="user$ | async as user">
+    <mat-card-header>
+      <div class="profile-header">
+        <div class="profile-image">
+          <img
+            [src]="user.photoURL || 'assets/default-avatar.png'"
+            alt="Profile picture"
+          />
+          <button
+            mat-mini-fab
+            color="primary"
+            class="edit-photo-btn"
+            *ngIf="isEditMode"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+        </div>
+        <mat-card-title>Profile Settings</mat-card-title>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+        <div class="form-fields">
+          <mat-form-field appearance="outline">
+            <mat-label>Display Name</mat-label>
+            <input
+              matInput
+              formControlName="displayName"
+              [readonly]="!isEditMode"
+            />
+            <mat-error *ngIf="profileForm.get('displayName')?.invalid">
+              {{ getErrorMessage("displayName") }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" readonly />
+          </mat-form-field>
+        </div>
+
+        <div class="action-buttons">
+          <ng-container *ngIf="!isEditMode; else editModeButtons">
+            <button
+              mat-raised-button
+              color="primary"
+              type="button"
+              (click)="toggleEditMode()"
+            >
+              Edit Profile
+            </button>
+          </ng-container>
+
+          <ng-template #editModeButtons>
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              [disabled]="
+                profileForm.invalid || profileForm.pristine || isLoading
+              "
+            >
+              <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+              <span *ngIf="!isLoading">Save Changes</span>
+            </button>
+            <button mat-button type="button" (click)="toggleEditMode()">
+              Cancel
+            </button>
+          </ng-template>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

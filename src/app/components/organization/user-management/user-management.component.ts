@@ -1,117 +1,132 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { OrganizationService } from '../../../services/organization.service';
-import { Observable } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Observable } from 'rxjs';
+import { OrganizationService } from '../../../services/organization.service';
+import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
+import { Member } from '../../../shared/types';
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [MatFormFieldModule],
-  template: `
-    <div class="user-management">
-      <div class="add-user">
-        <mat-form-field>
-          <input matInput placeholder="User Email" #userEmail />
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-select #role value="member">
-            <mat-option value="member">Member</mat-option>
-            <mat-option value="admin">Admin</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="addUser(userEmail.value, role.value)"
-        >
-          Add User
-        </button>
-      </div>
-
-      <table mat-table [dataSource]="members$ | async" class="member-table">
-        <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef>Email</th>
-          <td mat-cell *matCellDef="let member">{{ member.email }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="role">
-          <th mat-header-cell *matHeaderCellDef>Role</th>
-          <td mat-cell *matCellDef="let member">
-            <mat-select
-              [(value)]="member.role"
-              (selectionChange)="updateRole(member.id, $event.value)"
-              [disabled]="member.role === 'owner'"
-            >
-              <mat-option value="member">Member</mat-option>
-              <mat-option value="admin">Admin</mat-option>
-              <mat-option value="owner">Owner</mat-option>
-            </mat-select>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>Actions</th>
-          <td mat-cell *matCellDef="let member">
-            <button
-              mat-icon-button
-              color="warn"
-              (click)="removeMember(member.id)"
-              [disabled]="member.role === 'owner'"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-    </div>
-  `,
-  styles: [
-    `
-      .user-management {
-        padding: 20px;
-      }
-      .add-user {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 20px;
-      }
-      .member-table {
-        width: 100%;
-      }
-    `,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTableModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatTooltipModule,
   ],
+  templateUrl: './user-management.component.html',
+  styleUrls: ['./user-management.component.scss'],
 })
 export class UserManagementComponent implements OnInit {
-  @Input() organizationId: string;
-  members$: Observable<any[]>;
-  displayedColumns = ['email', 'role', 'actions'];
+  @Input() organizationId!: string;
 
-  constructor(private orgService: OrganizationService) {}
+  userForm: FormGroup;
+  members$: Observable<Member[]>;
+  displayedColumns = ['email', 'role', 'joinedAt', 'actions'];
+  isLoading = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private orgService: OrganizationService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
+  ) {
+    this.userForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      role: ['member', Validators.required],
+    });
+  }
 
   ngOnInit() {
+    this.loadMembers();
+  }
+
+  loadMembers() {
     this.members$ = this.orgService.getOrganizationMembers(this.organizationId);
   }
 
-  async addUser(email: string, role: string) {
-    await this.orgService.addMemberByEmail(this.organizationId, email, role);
+  async addUser() {
+    if (this.userForm.valid) {
+      this.isLoading = true;
+      try {
+        const { email, role } = this.userForm.value;
+        await this.orgService.addMemberByEmail(
+          this.organizationId,
+          email,
+          role
+        );
+        this.snackBar.open('User added successfully', 'Close', {
+          duration: 3000,
+        });
+        this.userForm.reset({ role: 'member' });
+      } catch (error) {
+        this.snackBar.open('Error adding user', 'Close', { duration: 3000 });
+      } finally {
+        this.isLoading = false;
+      }
+    }
   }
 
   async updateRole(memberId: string, newRole: string) {
-    await this.orgService.updateMemberRole(
-      this.organizationId,
-      memberId,
-      newRole
-    );
+    try {
+      await this.orgService.updateMemberRole(
+        this.organizationId,
+        memberId,
+        newRole
+      );
+      this.snackBar.open('Role updated successfully', 'Close', {
+        duration: 3000,
+      });
+    } catch (error) {
+      this.snackBar.open('Error updating role', 'Close', { duration: 3000 });
+    }
   }
 
-  async removeMember(memberId: string) {
-    if (confirm('Are you sure you want to remove this member?')) {
-      await this.orgService.removeMember(this.organizationId, memberId);
-    }
+  async removeMember(memberId: string, memberEmail: string) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Remove Member',
+        message: `Are you sure you want to remove ${memberEmail} from the organization?`,
+        confirmText: 'Remove',
+        cancelText: 'Cancel',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        try {
+          await this.orgService.removeMember(this.organizationId, memberId);
+          this.snackBar.open('Member removed successfully', 'Close', {
+            duration: 3000,
+          });
+        } catch (error) {
+          this.snackBar.open('Error removing member', 'Close', {
+            duration: 3000,
+          });
+        }
+      }
+    });
   }
 }

@@ -1,71 +1,96 @@
-<div class="user-management">
-  <div class="add-user-form">
-    <mat-form-field appearance="outline">
-      <mat-label>User Email</mat-label>
-      <input
-        matInput
-        [formControl]="emailControl"
-        placeholder="Enter email address"
-      />
-      <mat-error *ngIf="emailControl.errors?.email">
-        Please enter a valid email address
-      </mat-error>
-    </mat-form-field>
+<div class="user-management-container">
+  <div class="invite-section">
+    <h2>Invite New Member</h2>
+    <form [formGroup]="userForm" (ngSubmit)="addUser()" class="invite-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Email Address</mat-label>
+        <input
+          matInput
+          formControlName="email"
+          placeholder="Enter email address"
+        />
+        <mat-error *ngIf="userForm.get('email')?.errors?.required">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="userForm.get('email')?.errors?.email">
+          Please enter a valid email address
+        </mat-error>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Role</mat-label>
-      <mat-select [formControl]="roleControl">
-        <mat-option value="member">Member</mat-option>
-        <mat-option value="admin">Admin</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="addUser()"
-      [disabled]="emailControl.invalid || roleControl.invalid"
-    >
-      Add User
-    </button>
-  </div>
-
-  <table mat-table [dataSource]="members$ | async" class="member-table">
-    <ng-container matColumnDef="email">
-      <th mat-header-cell *matHeaderCellDef>Email</th>
-      <td mat-cell *matCellDef="let member">{{ member.email }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="role">
-      <th mat-header-cell *matHeaderCellDef>Role</th>
-      <td mat-cell *matCellDef="let member">
-        <mat-select
-          [(value)]="member.role"
-          (selectionChange)="updateRole(member.id, $event.value)"
-          [disabled]="member.role === 'owner'"
-        >
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role">
           <mat-option value="member">Member</mat-option>
           <mat-option value="admin">Admin</mat-option>
-          <mat-option value="owner">Owner</mat-option>
         </mat-select>
-      </td>
-    </ng-container>
+      </mat-form-field>
 
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let member">
-        <button
-          mat-icon-button
-          color="warn"
-          (click)="removeMember(member.id)"
-          [disabled]="member.role === 'owner'"
-        >
-          <mat-icon>delete</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="userForm.invalid || isLoading"
+      >
+        <mat-icon>person_add</mat-icon>
+        Invite Member
+      </button>
+    </form>
+  </div>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
+  <div class="members-section">
+    <h2>Organization Members</h2>
+    <table mat-table [dataSource]="members$ | async" class="members-table">
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let member">
+          <div class="member-info">
+            <mat-icon class="member-icon">person</mat-icon>
+            {{ member.email }}
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>Role</th>
+        <td mat-cell *matCellDef="let member">
+          <mat-form-field appearance="outline" class="role-select">
+            <mat-select
+              [(value)]="member.role"
+              (selectionChange)="updateRole(member.id, $event.value)"
+              [disabled]="member.role === 'owner'"
+            >
+              <mat-option value="member">Member</mat-option>
+              <mat-option value="admin">Admin</mat-option>
+              <mat-option value="owner">Owner</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="joinedAt">
+        <th mat-header-cell *matHeaderCellDef>Joined</th>
+        <td mat-cell *matCellDef="let member">
+          {{ member.joinedAt?.toDate() | date : "mediumDate" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let member">
+          <button
+            mat-icon-button
+            color="warn"
+            [disabled]="member.role === 'owner'"
+            (click)="removeMember(member.id, member.email)"
+            matTooltip="Remove member"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
 </div>

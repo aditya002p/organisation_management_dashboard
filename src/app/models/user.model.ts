@@ -1,8 +1,7 @@
 export interface User {
   uid: string;
-  email: string;
-  displayName?: string | null;
-  photoURL?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  updatedAt?: any;
 }

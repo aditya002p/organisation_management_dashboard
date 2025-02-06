@@ -1,7 +1,8 @@
 // src/styles/styles.scss
 @import "variables";
 @import "src/styles/_mixins.scss";
-
+@use "@angular/material" as mat;
+@include mat.core();
 * {
   margin: 0;
   padding: 0;
