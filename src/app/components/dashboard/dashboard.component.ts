@@ -1,101 +1,180 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { Observable } from 'rxjs';
+import { Organization, Member } from '../../shared/types';
 import { OrganizationService } from '../../services/organization.service';
 import { AuthService } from '../../services/auth.service';
-import { Observable } from 'rxjs';
-import { Organization } from '../../shared/types';
-import { switchMap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    RouterModule,
-  ],
+  imports: [CommonModule, RouterModule],
   template: `
     <div class="dashboard-container">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>My Organizations</mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
-          <div class="org-grid">
-            <mat-card
-              *ngFor="let org of organizations$ | async"
-              class="org-card"
-            >
-              <mat-card-header>
-                <mat-card-title>{{ org.name }}</mat-card-title>
-                <mat-card-subtitle>{{ org.description }}</mat-card-subtitle>
-              </mat-card-header>
-
-              <mat-card-actions>
-                <button mat-button [routerLink]="['/organization', org.id]">
-                  View Details
-                </button>
-              </mat-card-actions>
-            </mat-card>
-
-            <mat-card class="org-card new-org" (click)="createNewOrg()">
-              <mat-icon>add</mat-icon>
-              <span>Create New Organization</span>
-            </mat-card>
+      <!-- Sidebar -->
+      <nav class="sidebar" [class.sidebar-mobile]="isMobileMenuOpen">
+        <div class="mobile-header">
+          <div class="logo-container">
+            <h1>OMD</h1>
           </div>
-        </mat-card-content>
-      </mat-card>
+          <button class="menu-toggle" (click)="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <ul class="nav-items">
+          <li
+            *ngFor="let item of menuItems"
+            [class.active]="item.active"
+            class="nav-item"
+            (click)="onNavItemClick(item)"
+          >
+            <i [class]="item.icon"></i>
+            <span>{{ item.label }}</span>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Mobile Header -->
+        <div class="mobile-menu-toggle">
+          <button (click)="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+
+        <!-- Header -->
+        <header class="dashboard-header">
+          <div class="header-welcome">
+            <h1>Hi {{ currentUser?.displayName || 'User' }},</h1>
+            <p>you can manage your whole team from here.</p>
+          </div>
+          <div class="header-actions">
+            <div class="search-container">
+              <input type="search" placeholder="Search..." />
+            </div>
+            <div class="user-profile">
+              <img
+                [src]="currentUser?.photoURL || 'assets/default-avatar.png'"
+                [alt]="currentUser?.displayName || 'Profile'"
+              />
+            </div>
+          </div>
+        </header>
+
+        <!-- Organizations Grid -->
+        <div class="organizations-grid">
+          <div *ngFor="let org of organizations$ | async" class="org-card">
+            <div class="org-header">
+              <h2>{{ org.name }}</h2>
+              <span class="created-date"
+                >Created {{ org.createdAt | date }}</span
+              >
+            </div>
+            <p class="org-description">{{ org.description }}</p>
+            <div class="org-footer">
+              <span class="member-count">
+                {{ getMemberCount(org.id) | async }} members
+              </span>
+              <button [routerLink]="['/organization', org.id]" class="view-btn">
+                View Details →
+              </button>
+            </div>
+          </div>
+
+          <!-- Create New Card -->
+          <div
+            class="org-card create-card"
+            [routerLink]="['/organization/create']"
+          >
+            <div class="create-content">
+              <i class="fas fa-plus-circle"></i>
+              <span>Create New Organization</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <section class="activity-section">
+          <h2>Recent Activity</h2>
+          <div class="activity-list">
+            <div
+              *ngFor="let member of recentMembers$ | async"
+              class="activity-item"
+            >
+              <img
+                [src]="member.photoURL || 'assets/default-avatar.png'"
+                [alt]="member.displayName"
+              />
+              <div class="activity-details">
+                <p>
+                  {{ member.displayName }} joined {{ member.organizationName }}
+                </p>
+                <span>{{ member.joinedAt | date : 'short' }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Mobile Menu Overlay -->
+      <div
+        class="mobile-overlay"
+        [class.active]="isMobileMenuOpen"
+        (click)="toggleMobileMenu()"
+      ></div>
     </div>
   `,
-  styles: [
-    `
-      .dashboard-container {
-        padding: 20px;
-      }
-      .org-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-        padding: 20px;
-      }
-      .org-card {
-        cursor: pointer;
-      }
-      .new-org {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 200px;
-      }
-    `,
-  ],
+  styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
   organizations$: Observable<Organization[]>;
+  recentMembers$: Observable<any[]>;
+  currentUser: any;
+  isMobileMenuOpen = false;
+
+  menuItems = [
+    { label: 'Home', icon: 'fas fa-home', active: true },
+    { label: 'Create', icon: 'fas fa-plus' },
+    { label: 'Details', icon: 'fas fa-info-circle' },
+    { label: 'User', icon: 'fas fa-user' },
+    { label: 'Profile', icon: 'fas fa-user' },
+    {
+      label: 'Settings',
+      icon: 'fas fa-cog',
+      routerLink: '/organization/settings',
+    },
+  ];
 
   constructor(
     private orgService: OrganizationService,
-    private auth: AuthService,
-    private router: Router // ✅ Fixed: Imported and Injected Correctly
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.organizations$ = this.auth.user$.pipe(
-      switchMap((user) =>
-        user ? this.orgService.getUserOrganizations(user.uid) : []
-      )
-    );
+    this.authService.user$.subscribe((user) => {
+      if (user) {
+        this.currentUser = user;
+        this.organizations$ = this.orgService.getUserOrganizations(user.uid);
+      }
+    });
   }
 
-  createNewOrg(): void {
-    this.router.navigate(['/organization/create']);
+  getMemberCount(orgId: string): Observable<number> {
+    return this.orgService.getMemberCount(orgId);
+  }
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  onNavItemClick(item: any): void {
+    if (item.routerLink) {
+      this.router.navigate([item.routerLink]);
+    }
+    this.toggleMobileMenu();
   }
 }

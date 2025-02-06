@@ -1,63 +1,63 @@
-<!-- src/app/components/organization/settings/organization-settings.component.html -->
-<div class="organization-settings-container">
-  <h1>Organization Settings</h1>
+<div class="organization-settings">
+  <mat-card class="settings-card">
+    <mat-card-title>Organization Settings</mat-card-title>
 
-  <form (ngSubmit)="saveSettings()" [formGroup]="settingsForm">
-    <div class="settings-section">
-      <h2>General Settings</h2>
+    <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="name">Organization Name</label>
-        <input
-          type="text"
-          id="name"
-          formControlName="name"
-          class="form-control"
-        />
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Organization Name</mat-label>
+          <input matInput formControlName="name" />
+          <mat-error *ngIf="settingsForm.get('name')?.invalid">
+            Name is required
+          </mat-error>
+        </mat-form-field>
       </div>
 
       <div class="form-group">
-        <label for="description">Description</label>
-        <textarea
-          id="description"
-          formControlName="description"
-          class="form-control"
-          rows="4"
-        ></textarea>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="3" formControlName="description"></textarea>
+        </mat-form-field>
       </div>
-    </div>
 
-    <div class="settings-section">
-      <h2>Membership Settings</h2>
       <div class="form-group">
-        <label>
-          <input type="checkbox" formControlName="openMembership" />
+        <mat-checkbox formControlName="openMembership">
           Allow Open Membership
-        </label>
-        <small>Anyone can join the organization</small>
+        </mat-checkbox>
+        <small>Anyone can join the organization.</small>
       </div>
 
       <div class="form-group">
-        <label>Invite Domains</label>
-        <input
-          type="text"
-          formControlName="inviteDomains"
-          class="form-control"
-          placeholder="e.g. @company.com, @organization.org"
-        />
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Invite Domains</mat-label>
+          <input
+            matInput
+            formControlName="inviteDomains"
+            placeholder="e.g. @company.com, @organization.org"
+          />
+        </mat-form-field>
       </div>
-    </div>
 
-    <div class="settings-section">
-      <h2>Danger Zone</h2>
-      <button
-        type="button"
-        class="btn btn-danger"
-        (click)="deleteOrganization()"
-      >
-        Delete Organization
-      </button>
-    </div>
+      <div class="button-group">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="settingsForm.invalid || isLoading"
+        >
+          Save Changes
+        </button>
 
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-  </form>
+        <button
+          mat-raised-button
+          color="warn"
+          type="button"
+          (click)="deleteOrganization()"
+          [disabled]="isLoading"
+        >
+          Delete Organization
+        </button>
+      </div>
+    </form>
+  </mat-card>
 </div>

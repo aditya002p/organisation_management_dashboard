@@ -33,6 +33,7 @@ export class LoginComponent {
       try {
         const { email, password } = this.loginForm.value;
         await this.authService.emailSignIn(email, password);
+        console.log('Login successful, should navigate now!');
       } catch (error: any) {
         this.errorMessage = error.message || 'Login failed. Please try again.';
       }

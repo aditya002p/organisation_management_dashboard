@@ -11,7 +11,7 @@ import { ProfileSettingsComponent } from './components/profile/profile-settings.
 import { CreateOrganizationComponent } from './components/organization/create/create-organization.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   {

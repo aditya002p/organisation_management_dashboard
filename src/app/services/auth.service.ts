@@ -22,11 +22,13 @@ export class AuthService {
     private router: Router
   ) {
     this.user$ = this.afAuth.authState.pipe(
-      switchMap((user) =>
-        user
-          ? this.firestore.doc<User>(`users/${user.uid}`).valueChanges()
-          : of(null)
-      )
+      switchMap((user) => {
+        console.log('Auth State Changed:', user); // Check this
+        if (user) {
+          return this.firestore.doc<User>(`users/${user.uid}`).valueChanges();
+        }
+        return of(null);
+      })
     );
   }
 
@@ -53,7 +55,7 @@ export class AuthService {
   async emailSignIn(email: string, password: string): Promise<void> {
     try {
       await this.afAuth.signInWithEmailAndPassword(email, password);
-      this.snackBar.open('Welcome back!', 'Close', { duration: 3000 });
+      this.snackBar.open('Welcome back!', 'Close', { duration: 5000 });
       this.router.navigate(['/dashboard']);
     } catch (error: any) {
       this.snackBar.open(error.message, 'Close', { duration: 5000 });
